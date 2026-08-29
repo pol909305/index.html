@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSTEM COMPROMISED</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      color: #00ff41;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      height: 100vh;
+      cursor: none;
+    }
+
+    /* Matrix Canvas */
+    #matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.55;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 255, 65, 0.03) 51%
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 2;
+      animation: scan 8s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100%; }
+    }
+
+    /* Main Content */
+    #main {
+      position: relative;
+      z-index: 10;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Glitch Title */
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      font-weight: 700;
+      color: #00ff41;
+      text-shadow: 
+        0 0 10px #00ff41,
+        0 0 20px #00ff41,
+        0 0 40px #00ff41,
+        0 0 80px #00ff41;
+      margin-bottom: 12px;
+      letter-spacing: 4px;
+      position: relative;
+      animation: glitch 2.5s infinite;
+    }
+
+    .title::before,
+    .title::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .title::before {
+      left: 2px;
+      text-shadow: -2px 0 #ff0040;
+      clip: rect(24px, 550px, 90px, 0);
+      animation: glitch-anim 2s infinite linear alternate-reverse;
+    }
+
+    .title::after {
+      left: -2px;
+      text-shadow: -2px 0 #00fff9;
+      clip: rect(85px, 550px, 140px, 0);
+      animation: glitch-anim2 3s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% { transform: none; }
+      92% { transform: skewX(1deg); }
+      94% { transform: skewX(-1.5deg); }
+      96% { transform: none; }
+    }
+
+    @keyframes glitch-anim {
+      0% { clip: rect(32px, 9999px, 18px, 0); }
+      20% { clip: rect(85px, 9999px, 140px, 0); }
+      40% { clip: rect(12px, 9999px, 78px, 0); }
+      60% { clip: rect(95px, 9999px, 25px, 0); }
+      80% { clip: rect(45px, 9999px, 110px, 0); }
+      100% { clip: rect(70px, 9999px, 55px, 0); }
+    }
+
+    @keyframes glitch-anim2 {
+      0% { clip: rect(65px, 9999px, 100px, 0); }
+      20% { clip: rect(15px, 9999px, 45px, 0); }
+      40% { clip: rect(90px, 9999px, 20px, 0); }
+      60% { clip: rect(30px, 9999px, 80px, 0); }
+      80% { clip: rect(55px, 9999px, 120px, 0); }
+      100% { clip: rect(10px, 9999px, 70px, 0); }
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #00cc33;
+      margin-bottom: 25px;
+      letter-spacing: 6px;
+      opacity: 0.85;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* Image */
+    .img-box {
+      width: min(320px, 80vw);
+      border: 2px solid #00ff41;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 
+        0 0 15px #00ff41,
+        0 0 30px rgba(0, 255, 65, 0.4),
+        inset 0 0 20px rgba(0, 255, 65, 0.1);
+      margin-bottom: 28px;
+      position: relative;
+      animation: border-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes border-glow {
+      0%, 100% { box-shadow: 0 0 15px #00ff41, 0 0 30px rgba(0, 255, 65, 0.3); }
+      50% { box-shadow: 0 0 25px #00ff41, 0 0 50px rgba(0, 255, 65, 0.6); }
+    }
+
+    .img-box img {
+      width: 100%;
+      display: block;
+      filter: grayscale(30%) contrast(1.2) brightness(0.9);
+      transition: filter 0.4s;
+    }
+
+    .img-box:hover img {
+      filter: grayscale(0%) contrast(1.1) brightness(1);
+    }
+
+    /* Info Panel */
+    .info-panel {
+      background: rgba(0, 20, 0, 0.85);
+      border: 1px solid #00ff41;
+      border-radius: 6px;
+      padding: 22px 28px;
+      width: min(420px, 92vw);
+      text-align: right;
+      box-shadow: 0 0 25px rgba(0, 255, 65, 0.25);
+      backdrop-filter: blur(4px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff41, transparent);
+      animation: scanline 3s linear infinite;
+    }
+
+    @keyframes scanline {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(0, 255, 65, 0.15);
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      color: #00aa2a;
+      min-width: 90px;
+    }
+
+    .value {
+      color: #00ff41;
+      font-weight: bold;
+      text-shadow: 0 0 8px #00ff41;
+    }
+
+    /* Status Bar */
+    .status {
+      margin-top: 18px;
+      font-size: 0.85rem;
+      color: #ff3333;
+      letter-spacing: 3px;
+      animation: blink-red 1.2s infinite;
+    }
+
+    @keyframes blink-red {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 22px;
+      font-size: 0.7rem;
+      color: #006622;
+      letter-spacing: 3px;
+      opacity: 0.8;
+    }
+
+    .footer span {
+      color: #00ff41;
+      text-shadow: 0 0 6px #00ff41;
+    }
+
+    /* Cursor */
+    .cursor {
+      position: fixed;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #00ff41;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.15s, height 0.15s;
+      box-shadow: 0 0 10px #00ff41;
+    }
+
+    .cursor.clicked {
+      width: 10px;
+      height: 10px;
+      background: rgba(0, 255, 65, 0.4);
+    }
+
+    /* Mobile */
+    @media (max-width: 500px) {
+      .title { letter-spacing: 2px; }
+      .subtitle { letter-spacing: 3px; font-size: 0.95rem; }
+      .info-panel { padding: 16px 18px; }
+      .info-row { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="matrix"></canvas>
+  <div class="scanlines"></div>
+  <div class="cursor" id="cursor"></div>
+
+  <div id="main">
+    <div class="title" data-text="HACKED BY Al-ahamarii.">HACKED BY BADR</div>
+    <div class="subtitle">SYSTEM FULLY COMPROMISED</div>
+
+    <div class="img-box">
+      <img src="https://i.pinimg.com/1200x/3c/35/4b/3c354b1a90499fbc5a477a07a21088a1.jpg" alt="target" id="hack-img">
+    </div>
+
+    <div class="info-panel">
+      <div class="info-row">
+        <span class="label">IP ADDRESS</span>
+        <span class="value" id="ip">LOADING...</span>
+      </div>
+      <div class="info-row">
+        <span class="label">LOCATION</span>
+        <span class="value" id="location">LOADING...</span>
+      </div>
+      <div class="info-row">
+        <span class="label">ISP</span>
+        <span class="value" id="isp">LOADING...</span>
+      </div>
+      <div class="info-row">
+        <span class="label">OS</span>
+        <span class="value" id="os">LOADING...</span>
+      </div>
+      <div class="info-row">
+        <span class="label">SCREEN</span>
+        <span class="value" id="screen">LOADING...</span>
+      </div>
+      <div class="info-row">
+        <span class="label">BROWSER</span>
+        <span class="value" id="browser">LOADING...</span>
+      </div>
+    </div>
+
+    <div class="status">● ACCESS GRANTED — DATA EXFILTRATED</div>
+    <div class="footer">DEV BY <span>AL-AHMARI</span> • DEV BY <span>AL-AHMARI</span></div>
+  </div>
+
+  <audio id="bg-audio" loop>
+    <source src="https://bulleti.lol/uploads/04mdkFksditf/TANIN.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // ========== MATRIX RAIN ==========
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    const fontSize = 16;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 40);
+
+    // ========== CUSTOM CURSOR ==========
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    document.addEventListener('mousedown', () => cursor.classList.add('clicked'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('clicked'));
+
+    // ========== AUDIO ==========
+    const audio = document.getElementById('bg-audio');
+    document.addEventListener('click', () => {
+      audio.volume = 0.45;
+      audio.play().catch(() => {});
+    }, { once: true });
+
+    // ========== SYSTEM INFO ==========
+    function getBrowser() {
+      const ua = navigator.userAgent;
+      if (ua.includes('Edg')) return 'Microsoft Edge';
+      if (ua.includes('Chrome')) return 'Google Chrome';
+      if (ua.includes('Firefox')) return 'Mozilla Firefox';
+      if (ua.includes('Safari')) return 'Apple Safari';
+      return 'Unknown';
+    }
+
+    function getOS() {
+      const p = navigator.platform || '';
+      const ua = navigator.userAgent;
+      if (/Win/i.test(p)) return 'Windows';
+      if (/Mac/i.test(p)) return 'macOS';
+      if (/Linux/i.test(p)) return 'Linux';
+      if (/Android/i.test(ua)) return 'Android';
+      if (/iPhone|iPad/i.test(ua)) return 'iOS';
+      return p || 'Unknown OS';
+    }
+
+    async function loadData() {
+      document.getElementById('os').textContent = getOS();
+      document.getElementById('screen').textContent = `${window.screen.width} × ${window.screen.height}`;
+      document.getElementById('browser').textContent = getBrowser();
+
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        document.getElementById('ip').textContent = data.ip || 'HIDDEN';
+        document.getElementById('location').textContent = `${data.city || '?'}, ${data.country_name || '?'}`;
+        document.getElementById('isp').textContent = data.org || 'Private Network';
+      } catch (err) {
+        document.getElementById('ip').textContent = 'BLOCKED';
+        document.getElementById('location').textContent = 'FIREWALL ACTIVE';
+        document.getElementById('isp').textContent = 'PROTECTED';
+      }
+    }
+
+    loadData();
+
+    // Disable right click
+    document.addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+</body>
+</html>
