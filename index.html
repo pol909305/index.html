@@ -1,388 +1,160 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYSTEM BREACH</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@600;800&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H Key Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow: hidden;
+        }
 
-    body {
-      background: #000;
-      color: #00ff9d;
-      font-family: 'Share Tech Mono', monospace;
-      height: 100vh;
-      overflow: hidden;
-      cursor: none;
-    }
+        /* اللوحة الزرقاء الصغيرة */
+        #panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: linear-gradient(145deg, #0a84ff, #0066cc);
+            border-radius: 12px;
+            padding: 18px;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.5),
+                        0 0 15px rgba(10, 132, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: none; /* مخفية في البداية */
+            z-index: 9999;
+            animation: slideIn 0.25s ease;
+        }
 
-    #matrix {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      opacity: 0.45;
-    }
+        #panel.show {
+            display: block;
+        }
 
-    .scanlines {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        transparent 50%,
-        rgba(0, 255, 157, 0.035) 51%
-      );
-      background-size: 100% 4px;
-      pointer-events: none;
-      z-index: 2;
-      animation: scan 7s linear infinite;
-    }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
-    @keyframes scan {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 100%; }
-    }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-    #main {
-      position: relative;
-      z-index: 10;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      text-align: center;
-    }
+        .panel-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
 
-    .title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: clamp(1.9rem, 5.5vw, 3.4rem);
-      font-weight: 800;
-      letter-spacing: 5px;
-      color: #00ff9d;
-      text-shadow: 0 0 15px #00ff9d, 0 0 35px #00ff9d, 0 0 70px #00ff9d;
-      margin-bottom: 10px;
-      position: relative;
-      animation: glitch 2.8s infinite;
-    }
+        .close-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
 
-    .title::before,
-    .title::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
 
-    .title::before {
-      left: 3px;
-      text-shadow: -2px 0 #ff0055;
-      clip-path: inset(15% 0 55% 0);
-      animation: glitch1 2s infinite linear alternate-reverse;
-    }
+        .panel-content {
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
 
-    .title::after {
-      left: -3px;
-      text-shadow: 2px 0 #00f0ff;
-      clip-path: inset(50% 0 15% 0);
-      animation: glitch2 2.6s infinite linear alternate-reverse;
-    }
+        /* رسالة مساعدة في الوسط */
+        .hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #555;
+            font-size: 18px;
+            text-align: center;
+        }
 
-    @keyframes glitch {
-      0%, 91%, 100% { transform: none; }
-      93% { transform: skewX(1.2deg) translateX(2px); }
-      95% { transform: skewX(-1.4deg) translateX(-2px); }
-    }
-
-    @keyframes glitch1 {
-      0% { clip-path: inset(20% 0 60% 0); }
-      25% { clip-path: inset(55% 0 15% 0); }
-      50% { clip-path: inset(10% 0 70% 0); }
-      75% { clip-path: inset(65% 0 10% 0); }
-      100% { clip-path: inset(35% 0 40% 0); }
-    }
-
-    @keyframes glitch2 {
-      0% { clip-path: inset(60% 0 10% 0); }
-      25% { clip-path: inset(15% 0 50% 0); }
-      50% { clip-path: inset(70% 0 5% 0); }
-      75% { clip-path: inset(5% 0 60% 0); }
-      100% { clip-path: inset(30% 0 45% 0); }
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      color: #00cc77;
-      letter-spacing: 6px;
-      margin-bottom: 28px;
-      opacity: 0.85;
-      animation: pulse 1.7s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.55; }
-      50% { opacity: 1; }
-    }
-
-    .img-box {
-      width: min(300px, 78vw);
-      border: 2px solid #00ff9d;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 28px;
-      box-shadow: 0 0 20px #00ff9d, 0 0 40px rgba(0, 255, 157, 0.35);
-      animation: glow 3.2s ease-in-out infinite;
-    }
-
-    @keyframes glow {
-      0%, 100% { box-shadow: 0 0 18px #00ff9d, 0 0 35px rgba(0,255,157,0.3); }
-      50% { box-shadow: 0 0 30px #00ff9d, 0 0 60px rgba(0,255,157,0.55); }
-    }
-
-    .img-box img {
-      width: 100%;
-      display: block;
-      filter: grayscale(25%) contrast(1.15) brightness(0.88);
-      transition: 0.4s;
-    }
-
-    .img-box:hover img {
-      filter: grayscale(0%) contrast(1.1) brightness(1);
-    }
-
-    .info-panel {
-      background: rgba(0, 18, 12, 0.9);
-      border: 1px solid #00ff9d55;
-      border-radius: 10px;
-      padding: 22px 26px;
-      width: min(400px, 92vw);
-      text-align: right;
-      box-shadow: 0 0 25px rgba(0, 255, 157, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .info-panel::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 60%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #00ff9d, transparent);
-      animation: line 2.8s linear infinite;
-    }
-
-    @keyframes line {
-      0% { left: -100%; }
-      100% { left: 150%; }
-    }
-
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 9px 0;
-      border-bottom: 1px solid rgba(0, 255, 157, 0.12);
-      font-size: 0.93rem;
-    }
-
-    .info-row:last-child { border-bottom: none; }
-
-    .label { color: #00aa66; }
-    .value {
-      color: #00ff9d;
-      font-weight: bold;
-      text-shadow: 0 0 8px #00ff9d;
-    }
-
-    .status {
-      margin-top: 20px;
-      font-size: 0.88rem;
-      color: #ff3b3b;
-      letter-spacing: 3px;
-      animation: blink 1.15s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .footer {
-      margin-top: 22px;
-      font-size: 0.72rem;
-      color: #007a44;
-      letter-spacing: 3px;
-    }
-
-    .footer span {
-      color: #00ff9d;
-      text-shadow: 0 0 6px #00ff9d;
-    }
-
-    .cursor {
-      position: fixed;
-      width: 18px;
-      height: 18px;
-      border: 2px solid #00ff9d;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 12px #00ff9d;
-      transition: 0.15s;
-    }
-
-    .cursor.clicked {
-      width: 10px;
-      height: 10px;
-      background: rgba(0, 255, 157, 0.45);
-    }
-
-    @media (max-width: 500px) {
-      .title { letter-spacing: 2px; }
-      .subtitle { letter-spacing: 3px; font-size: 0.9rem; }
-      .info-panel { padding: 16px 18px; }
-    }
-  </style>
+        .hint kbd {
+            background: #222;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            color: #0a84ff;
+            font-family: monospace;
+        }
+    </style>
 </head>
 <body>
 
-  <canvas id="matrix"></canvas>
-  <div class="scanlines"></div>
-  <div class="cursor" id="cursor"></div>
-
-  <div id="main">
-    <div class="title" data-text="HACKED BY Al-ahmari">HACKED BY Al-ahmari</div>
-    <div class="subtitle">SYSTEM FULLY COMPROMISED</div>
-
-    <div class="img-box">
-      <img src="https://i.pinimg.com/1200x/3c/35/4b/3c354b1a90499fbc5a477a07a21088a1.jpg" alt="target">
+    <div class="hint">
+        اضغط على زر <kbd>H</kbd> لفتح اللوحة
     </div>
 
-    <div class="info-panel">
-      <div class="info-row">
-        <span class="label">IP ADDRESS</span>
-        <span class="value" id="ip">LOADING...</span>
-      </div>
-      <div class="info-row">
-        <span class="label">LOCATION</span>
-        <span class="value" id="location">LOADING...</span>
-      </div>
-      <div class="info-row">
-        <span class="label">ISP</span>
-        <span class="value" id="isp">LOADING...</span>
-      </div>
-      <div class="info-row">
-        <span class="label">OS</span>
-        <span class="value" id="os">LOADING...</span>
-      </div>
-      <div class="info-row">
-        <span class="label">SCREEN</span>
-        <span class="value" id="screen">LOADING...</span>
-      </div>
-      <div class="info-row">
-        <span class="label">BROWSER</span>
-        <span class="value" id="browser">LOADING...</span>
-      </div>
+    <div id="panel">
+        <div class="panel-header">
+            <h3>لوحة التحكم</h3>
+            <button class="close-btn" onclick="togglePanel()">×</button>
+        </div>
+        <div class="panel-content">
+            هذي اللوحة الزرقاء الصغيرة تظهر فوق على اليمين لما تضغط H.
+            <br><br>
+            تقدر تعدل المحتوى من هنا.
+        </div>
     </div>
 
-    <div class="status">● ACCESS GRANTED — DATA EXFILTRATED</div>
-    <div class="footer">DEV BY <span>Al-ahmari</span></div>
-  </div>
+    <script>
+        const panel = document.getElementById('panel');
+        let isOpen = false;
 
-  <audio id="bg-audio" loop>
-    <source src="https://raw.githubusercontent.com/pol909305/index.html/main/mm.mp3" type="audio/mpeg">
-  </audio>
+        function togglePanel() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                panel.classList.add('show');
+            } else {
+                panel.classList.remove('show');
+            }
+        }
 
-  <script>
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
+        // لما تضغط H أو h
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'h' || e.key === 'H') {
+                // عشان ما يكتب حرف h في أي مكان
+                e.preventDefault();
+                togglePanel();
+            }
 
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const chars = '01101010101010101010101010101010101010101010101010101010110101010101010101010101010101010101010101010101010101011010101010101010101010101010101010101010101010101010101101010101010101010101010101010101010101010101010101010110101010101010101010101010101010101010101010101010101';
-    const fontSize = 15;
-    let columns = Math.floor(canvas.width / fontSize);
-    let drops = Array(columns).fill(1);
-
-    function draw() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#00ff9d';
-      ctx.font = fontSize + 'px monospace';
-      for (let i = 0; i < drops.length; i++) {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    }
-    setInterval(draw, 38);
-
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-    });
-    document.addEventListener('mousedown', () => cursor.classList.add('clicked'));
-    document.addEventListener('mouseup', () => cursor.classList.remove('clicked'));
-
-    const audio = document.getElementById('bg-audio');
-    document.addEventListener('click', () => {
-      audio.volume = 0.4;
-      audio.play().catch(() => {});
-    }, { once: true });
-
-    function getBrowser() {
-      const ua = navigator.userAgent;
-      if (ua.includes('Edg')) return 'Microsoft Edge';
-      if (ua.includes('Chrome')) return 'Google Chrome';
-      if (ua.includes('Firefox')) return 'Mozilla Firefox';
-      if (ua.includes('Safari')) return 'Apple Safari';
-      return 'Unknown';
-    }
-
-    function getOS() {
-      const p = navigator.platform || '';
-      const ua = navigator.userAgent;
-      if (/Win/i.test(p)) return 'Windows';
-      if (/Mac/i.test(p)) return 'macOS';
-      if (/Linux/i.test(p)) return 'Linux';
-      if (/Android/i.test(ua)) return 'Android';
-      if (/iPhone|iPad/i.test(ua)) return 'iOS';
-      return p || 'Unknown';
-    }
-
-    async function loadData() {
-      document.getElementById('os').textContent = getOS();
-      document.getElementById('screen').textContent = `${screen.width} × ${screen.height}`;
-      document.getElementById('browser').textContent = getBrowser();
-
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        const data = await res.json();
-        document.getElementById('ip').textContent = data.ip || 'HIDDEN';
-        document.getElementById('location').textContent = `${data.city || '?'}, ${data.country_name || '?'}`;
-        document.getElementById('isp').textContent = data.org || 'Private Network';
-      } catch {
-        document.getElementById('ip').textContent = 'BLOCKED';
-        document.getElementById('location').textContent = 'FIREWALL ACTIVE';
-        document.getElementById('isp').textContent = 'PROTECTED';
-      }
-    }
-
-    loadData();
-    document.addEventListener('contextmenu', e => e.preventDefault());
-  </script>
+            // إغلاق بزر Escape
+            if (e.key === 'Escape' && isOpen) {
+                togglePanel();
+            }
+        });
+    </script>
 </body>
 </html>
